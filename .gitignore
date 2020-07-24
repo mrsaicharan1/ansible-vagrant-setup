@@ -1,3 +1,4 @@
 .vagrant
 files/*
 venv/*
+secrets.yml

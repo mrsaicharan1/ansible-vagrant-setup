@@ -1,6 +1,6 @@
 - name: who am i
-  hosts: vagrant
+  hosts: webservers
   become: true
   tasks:
-    - name: who am i
-      command: whoami
+    - name: print hostvars
+      command: hostvars info {{ hostvars }}
