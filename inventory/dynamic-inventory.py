@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # An Ansible dynamic inventory script must support two command-line flags:
 
 # --host=<hostname> for showing host details
@@ -8,6 +9,8 @@ import subprocess
 import paramiko
 import argparse
 import time
+import sys
+import json 
 
 def args_parse():
     parser = argparse.ArgumentParser(description='Dynamic Inventory for hosts')
@@ -27,7 +30,7 @@ def get_host_details(hostname):
     return hostname_details
 
 def running_hosts():
-    hosts = set()
+    hosts = list()
     cmd = "vagrant status --machine-readable"
     hosts_info_list = subprocess.check_output(cmd.split()).decode('utf-8').split('\n')
     for host_info in hosts_info_list:
@@ -37,7 +40,7 @@ def running_hosts():
             hostname_state_type = host_attributes[2]
             hostname_current_state = host_attributes[3]
             if hostname_current_state == 'running' and hostname_state_type == 'state':
-                hosts.add(hostname_proper)
+                hosts.append(hostname_proper)
         except IndexError:
             pass
     return hosts
@@ -46,10 +49,11 @@ def main():
     args = args_parse()
     if args.list:
         all_hosts = running_hosts()
-        return {"vagrant": all_hosts}
+        json.dump({"vagrant": all_hosts}, sys.stdout)
     elif args.host:
         specific = get_host_details("vagrant1")
-        return specific
+        json.dump(specific, sys.stdout)
 
-print(main())
+if __name__ == '__main__':
+    main()
 

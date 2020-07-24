@@ -1,0 +1,6 @@
+- name: who am i
+  hosts: vagrant
+  become: true
+  tasks:
+    - name: who am i
+      command: whoami
